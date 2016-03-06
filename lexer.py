@@ -16,7 +16,7 @@ class Lexer:
 
         self.sentence = sentence
 
-        self.punctuation_marks = [".", "?", "!", ":", ";", "-", "(", ")", "[", "]", "...", ";", "\"", "/", ","]
+        self.punctuation_marks = [".", "?", "!", ":", ";", "-", "(", ")", "[", "]", "...", ";", "'", "\"", "/", ","]
 
         self.delimiter_chars = [" ", "\t", "\n"]
 
@@ -29,7 +29,10 @@ class Lexer:
         tokens = []
 
         # Iterate over each character in the sentence and "collect" them
-        # into tokens
+        # into tokens.
+
+        # Each "test" in the lexer (for punctuation marks, delimiters, etc.) will move
+        # the counter to the first character of the next token.
 
         # I use a while condition...counter++ instead of a for loop here
         # because I need to increment the counter within the loop itself,
@@ -57,6 +60,9 @@ class Lexer:
                         token = char
                 else:
                     token = char
+
+                    # We need to move the counter to the first character of the next token
+                    i += 1
 
             # Test if the char is a token delimiter (a character that ends a token, such as whitespace)
             elif char in self.delimiter_chars:

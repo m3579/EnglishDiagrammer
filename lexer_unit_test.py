@@ -7,7 +7,7 @@ splitting the sentence into individual "tokens\").
 
 import lexer
 
-l = lexer.Lexer("The cat ran")
+l = lexer.Lexer("Hello, it's me")
 tokens = l.lex()
 
 print(tokens)
