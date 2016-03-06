@@ -16,13 +16,16 @@ class Lexer:
 
         self.sentence = sentence
 
+        print(len(self.sentence))
+
         self.punctuation_marks = [".", "?", "!", ":", ";", "-", "(", ")", "[", "]", "...", ";", "'", "\"", "/", ","]
 
         self.delimiter_chars = [" ", "\t", "\n"]
 
         # TODO: add numbers to this list
-        self.normal_chars = list(string.ascii_letters)
+        self.normal_chars = list(string.ascii_letters) + [str(i) for i in range(0, 10)]
 
+        
     def lex(self):
         """Convert the sentence that this Lexer is configured it into a list of tokens, """
 
@@ -38,7 +41,7 @@ class Lexer:
         # because I need to increment the counter within the loop itself,
         # which (as far as I have tried) does not work in a for loop
         i = 0
-        while i < len(self.sentence) - 1:
+        while i <= len(self.sentence) - 1:
             char = self.sentence[i]
 
             add_to_tokens = True
@@ -51,14 +54,27 @@ class Lexer:
             if char in self.punctuation_marks:
                 print("Found punctuation mark")
                 if char == '.':
-                    # There are at least two more characters left to make up
-                    # the rest of the possible ellipse ("...")
-                    if i < len(self.sentence) - 3:
-                        if i + 1 == '.' and i + 2 == '.':
-                            token = "..."
+                    # If there are at least two more characters (leaving room for an ellipse ["..."])
+                    # and if those next two characters are both periods, then it is an ellipse
+
+                    # Because the short-circuit "and" operator will exit the if statement if the first
+                    # condition is false, we can be sure that by the time it reaches self.sentence[i + x],
+                    # self.sentence will be long enough for it not to throw an index error
+                    if i < len(self.sentence) - 3 \
+                            and (self.sentence[i + 1] == '.' and self.sentence[i + 2] == '.'):
+                        print("It's an ellipse!")
+                        token = "..."
+
+                        # We need to move the counter to the first character of the next token
+                        i += 2
                     else:
+                        print("It's just a period")
                         token = char
+
+                        # We need to move the counter to the first character of the next token
+                        i += 1
                 else:
+                    print("It's not a period")
                     token = char
 
                     # We need to move the counter to the first character of the next token
@@ -69,19 +85,21 @@ class Lexer:
                 print("Found delimiter")
                 add_to_tokens = False
                 while char in self.delimiter_chars:
-                    if i < len(self.sentence) - 1:
-                        i += 1
+
+                    i += 1
+                    if i <= len(self.sentence) - 1:
                         char = self.sentence[i]
                     else:
                         break
 
+            # Test if the char is a normal letter or number
             elif char in self.normal_chars:
                 print("Found normal character")
                 while char in self.normal_chars:
                     token += char
-
-                    if i < len(self.sentence) - 1:
-                        i += 1
+                    print("Token is " + token)
+                    i += 1
+                    if i <= len(self.sentence) - 1:
                         char = self.sentence[i]
                     else:
                         break
@@ -93,9 +111,7 @@ class Lexer:
                     print("Error: cannot understand character " + char)
                     sys.exit(0)
 
-            if i >= len(self.sentence) - 1:
-                break
-
             print(tokens)
+            print(i)
 
         return tokens
